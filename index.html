@@ -69,7 +69,15 @@
     const uRot=gl.getUniformLocation(program,'rot'), uFov=gl.getUniformLocation(program,'fov'), uAspect=gl.getUniformLocation(program,'aspect');
     const texture=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,texture); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
 
-    let yaw=0, pitch=0, fov=75*Math.PI/180, dragging=false, lastX=0, lastY=0, pinch=0;
+    const viewName=new URLSearchParams(location.search).get('view')||'default';
+    const viewPresets={
+      default:{yaw:0,pitch:0,fov:75},
+      bed:{yaw:1.10,pitch:-0.03,fov:72},
+      tv:{yaw:-1.90,pitch:0.02,fov:72},
+      wardrobe:{yaw:2.78,pitch:0.01,fov:76}
+    };
+    const startView=viewPresets[viewName]||viewPresets.default;
+    let yaw=startView.yaw, pitch=startView.pitch, fov=startView.fov*Math.PI/180, dragging=false, lastX=0, lastY=0, pinch=0;
     const resize=()=>{ const d=Math.min(devicePixelRatio||1,2); canvas.width=Math.round(innerWidth*d); canvas.height=Math.round(innerHeight*d); gl.viewport(0,0,canvas.width,canvas.height); draw(); };
     const draw=()=>{ gl.uniform2f(uRot,yaw,pitch); gl.uniform1f(uFov,fov); gl.uniform1f(uAspect,canvas.width/canvas.height); gl.drawArrays(gl.TRIANGLES,0,6); };
     const move=(dx,dy)=>{ yaw-=dx*.0045; pitch=Math.max(-1.42,Math.min(1.42,pitch-dy*.0045)); draw(); hint.classList.add('hide'); };
@@ -79,7 +87,7 @@
     canvas.addEventListener('wheel',e=>{ e.preventDefault(); fov=Math.max(.55,Math.min(1.75,fov+e.deltaY*.001)); draw(); hint.classList.add('hide'); },{passive:false});
     canvas.addEventListener('touchmove',e=>{ if(e.touches.length===2){ const dx=e.touches[0].clientX-e.touches[1].clientX, dy=e.touches[0].clientY-e.touches[1].clientY, d=Math.hypot(dx,dy); if(pinch) fov=Math.max(.55,Math.min(1.75,fov+(pinch-d)*.003)); pinch=d; draw(); } },{passive:false});
     canvas.addEventListener('touchend',()=>pinch=0);
-    document.getElementById('reset').addEventListener('click',()=>{ yaw=0; pitch=0; fov=75*Math.PI/180; draw(); });
+    document.getElementById('reset').addEventListener('click',()=>{ yaw=startView.yaw; pitch=startView.pitch; fov=startView.fov*Math.PI/180; draw(); });
     document.getElementById('fullscreen').addEventListener('click',()=>{ if(!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); });
     addEventListener('resize',resize);
     const img=new Image(); img.onload=()=>{ gl.bindTexture(gl.TEXTURE_2D,texture); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img); resize(); loading.classList.add('hide'); setTimeout(()=>loading.remove(),500); }; img.onerror=()=>{ loading.innerHTML='<div class="error">The panorama could not be loaded. Please refresh the page.</div>'; };
