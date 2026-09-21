@@ -74,7 +74,8 @@
       default:{yaw:0,pitch:0,fov:75},
       bed:{yaw:1.10,pitch:-0.03,fov:72},
       tv:{yaw:-1.90,pitch:0.02,fov:72},
-      wardrobe:{yaw:2.78,pitch:0.01,fov:76}
+      wardrobe:{yaw:2.78,pitch:0.01,fov:76},
+      'wardrobe-straight':{yaw:0.58,pitch:0.01,fov:66}
     };
     const startView=viewPresets[viewName]||viewPresets.default;
     let yaw=startView.yaw, pitch=startView.pitch, fov=startView.fov*Math.PI/180, dragging=false, lastX=0, lastY=0, pinch=0;
