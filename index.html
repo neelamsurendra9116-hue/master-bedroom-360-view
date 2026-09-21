@@ -91,8 +91,9 @@
     document.getElementById('fullscreen').addEventListener('click',()=>{ if(!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); });
     addEventListener('resize',resize);
     const img=new Image(); img.onload=()=>{ gl.bindTexture(gl.TEXTURE_2D,texture); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img); resize(); loading.classList.add('hide'); setTimeout(()=>loading.remove(),500); }; img.onerror=()=>{ loading.innerHTML='<div class="error">The panorama could not be loaded. Please refresh the page.</div>'; };
-    const panoramaVersion='20260921-approved-tv-right';
-    Promise.all(['01','02','03','04'].map(n=>fetch(`assets/panorama.part${n}?v=${panoramaVersion}`,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('load');return r.text();})))
+    const panoramaName=new URLSearchParams(location.search).get('pano')==='selected'?'selected':'panorama';
+    const panoramaVersion=panoramaName==='selected'?'20260921-selected-final':'20260921-approved-tv-right';
+    Promise.all(['01','02','03','04'].map(n=>fetch(`assets/${panoramaName}.part${n}?v=${panoramaVersion}`,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('load');return r.text();})))
       .then(parts=>{ const raw=atob(parts.join('')); const bytes=new Uint8Array(raw.length); for(let i=0;i<raw.length;i++) bytes[i]=raw.charCodeAt(i); img.src=URL.createObjectURL(new Blob([bytes],{type:'image/jpeg'})); })
       .catch(()=>{ loading.innerHTML='<div class="error">The panorama could not be loaded. Please refresh the page.</div>'; });
   })();
