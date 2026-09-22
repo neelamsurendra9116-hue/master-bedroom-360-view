@@ -94,7 +94,7 @@
     const img=new Image(); img.onload=()=>{ gl.bindTexture(gl.TEXTURE_2D,texture); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img); resize(); loading.classList.add('hide'); setTimeout(()=>loading.remove(),500); }; img.onerror=()=>{ loading.innerHTML='<div class="error">The panorama could not be loaded. Please refresh the page.</div>'; };
     const requestedPanorama=new URLSearchParams(location.search).get('pano');
     const panoramaName=requestedPanorama==='girl'?'girl':requestedPanorama==='cbr'?'cbr':requestedPanorama==='selected'?'selected':'panorama';
-    const panoramaVersion=panoramaName==='girl'?'20260922-girl-final':panoramaName==='cbr'?'20260922-cbr-final':panoramaName==='selected'?'20260921-selected-final':'20260921-approved-tv-right';
+    const panoramaVersion=panoramaName==='girl'?'20260922-girl-final-v2':panoramaName==='cbr'?'20260922-cbr-final':panoramaName==='selected'?'20260921-selected-final':'20260921-approved-tv-right';
     const panoramaPartCount=panoramaName==='girl'?7:panoramaName==='cbr'?7:4;
     if(panoramaName==='cbr'){
       document.getElementById('room-title').textContent='Boy Room';
