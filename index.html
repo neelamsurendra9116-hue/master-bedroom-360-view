@@ -93,12 +93,16 @@
     addEventListener('resize',resize);
     const img=new Image(); img.onload=()=>{ gl.bindTexture(gl.TEXTURE_2D,texture); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img); resize(); loading.classList.add('hide'); setTimeout(()=>loading.remove(),500); }; img.onerror=()=>{ loading.innerHTML='<div class="error">The panorama could not be loaded. Please refresh the page.</div>'; };
     const requestedPanorama=new URLSearchParams(location.search).get('pano');
-    const panoramaName=requestedPanorama==='cbr'?'cbr':requestedPanorama==='selected'?'selected':'panorama';
-    const panoramaVersion=panoramaName==='cbr'?'20260922-cbr-final':panoramaName==='selected'?'20260921-selected-final':'20260921-approved-tv-right';
-    const panoramaPartCount=panoramaName==='cbr'?7:4;
+    const panoramaName=requestedPanorama==='girl'?'girl':requestedPanorama==='cbr'?'cbr':requestedPanorama==='selected'?'selected':'panorama';
+    const panoramaVersion=panoramaName==='girl'?'20260922-girl-final':panoramaName==='cbr'?'20260922-cbr-final':panoramaName==='selected'?'20260921-selected-final':'20260921-approved-tv-right';
+    const panoramaPartCount=panoramaName==='girl'?7:panoramaName==='cbr'?7:4;
     if(panoramaName==='cbr'){
       document.getElementById('room-title').textContent='Boy Room';
       document.title='Boy Room — 360° View';
+    }
+    if(panoramaName==='girl'){
+      document.getElementById('room-title').textContent='Girl Room';
+      document.title='Girl Room — 360° View';
     }
     Promise.all(Array.from({length:panoramaPartCount},(_,i)=>String(i+1).padStart(2,'0')).map(n=>fetch(`assets/${panoramaName}.part${n}?v=${panoramaVersion}`,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('load');return r.text();})))
       .then(parts=>{ const raw=atob(parts.join('')); const bytes=new Uint8Array(raw.length); for(let i=0;i<raw.length;i++) bytes[i]=raw.charCodeAt(i); img.src=URL.createObjectURL(new Blob([bytes],{type:'image/jpeg'})); })
